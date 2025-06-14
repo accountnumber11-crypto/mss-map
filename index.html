@@ -1,43 +1,204 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>MSS Locations in China</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style> #map { height: 100vh; width: 100%; } </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ministry of State Security Locations Map</title>
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+/>
+
+<!-- Leaflet MarkerCluster CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+/>
+
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  #map {
+    height: 90vh;
+    width: 100%;
+  }
+  #legend {
+    background: white;
+    padding: 10px;
+    font-size: 14px;
+    position: absolute;
+    bottom: 30px;
+    left: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    border-radius: 5px;
+    z-index: 1000;
+  }
+  #search-container {
+    position: absolute;
+    top: 10px;
+    left: 50px;
+    z-index: 1000;
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  }
+  #search-input {
+    width: 250px;
+    padding: 5px;
+    font-size: 14px;
+  }
+</style>
 </head>
 <body>
-  <div id="map"></div>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    const map = L.map('map').setView([34.5, 107], 4.5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
 
-    const locations = [
-      ["National MSS HQ - Xiyuan (Beijing)", 39.9986, 116.2705],
-      ["National MSS HQ - Dongchang'an (Beijing)", 39.9075, 116.4125],
-      ["Beijing MSS Detention - Dahongmen", 39.8345, 116.3912],
-      ["Shanghai MSS - Ruining Road", 31.1768, 121.4241],
-      ["Guangzhou MSS - Dongfeng Rd", 23.1303, 113.2665],
-      ["Nanjing MSS - Yangzhou Rd", 32.0603, 118.7722],
-      ["Hangzhou MSS - Shangtang Rd", 30.2965, 120.1406],
-      ["Jinan MSS - Zhanqian Street", 36.6758, 117.0009],
-      ["Wuhan MSS - Bayi Road", 30.5811, 114.3162],
-      ["Changchun MSS - Xi'an Avenue", 43.8160, 125.3220],
-      ["Shijiazhuang MSS - Gongnong Rd", 38.0455, 114.4757],
-      ["Kunming MSS - Xiba Rd", 25.0389, 102.6755],
-      ["Haikou MSS - Bailongnan Rd", 20.0275, 110.3440],
-      ["Nanchang MSS - Guoan Rd", 28.6829, 115.8582],
-      ["Xi'an Tech Site - Jinye 2 Rd", 34.2204, 108.8777],
-      ["Xi'an Tech Site - Taibai North Rd", 34.2672, 108.9301]
-    ];
+<div id="search-container">
+  <input
+    type="text"
+    id="search-input"
+    placeholder="Search locations..."
+    aria-label="Search locations"
+  />
+</div>
 
-    locations.forEach(([name, lat, lon]) => {
-      L.marker([lat, lon]).addTo(map).bindPopup(name);
+<div id="map"></div>
+
+<div id="legend">
+  <strong>Legend</strong><br />
+  <span style="color: #3388ff;">&#9679;</span> MSS Location
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+<!-- Leaflet MarkerCluster JS -->
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<script>
+  // Approximate MSS locations by city
+  const locations = [
+    {
+      name: "MSS Headquarters - Beijing",
+      address: "Beijing, China",
+      lat: 39.9042,
+      lng: 116.4074,
+    },
+    {
+      name: "MSS Branch - Shanghai",
+      address: "Shanghai, China",
+      lat: 31.2304,
+      lng: 121.4737,
+    },
+    {
+      name: "MSS Branch - Guangzhou",
+      address: "Guangzhou, China",
+      lat: 23.1291,
+      lng: 113.2644,
+    },
+    {
+      name: "MSS Branch - Chengdu",
+      address: "Chengdu, Sichuan, China",
+      lat: 30.5728,
+      lng: 104.0668,
+    },
+    {
+      name: "MSS Branch - Wuhan",
+      address: "Wuhan, Hubei, China",
+      lat: 30.5928,
+      lng: 114.3055,
+    },
+    {
+      name: "MSS Branch - Shenyang",
+      address: "Shenyang, Liaoning, China",
+      lat: 41.8057,
+      lng: 123.4315,
+    },
+    {
+      name: "MSS Branch - Xi'an",
+      address: "Xi'an, Shaanxi, China",
+      lat: 34.3416,
+      lng: 108.9398,
+    },
+    {
+      name: "MSS Branch - Hangzhou",
+      address: "Hangzhou, Zhejiang, China",
+      lat: 30.2741,
+      lng: 120.1551,
+    },
+    {
+      name: "MSS Branch - Harbin",
+      address: "Harbin, Heilongjiang, China",
+      lat: 45.8038,
+      lng: 126.5349,
+    },
+    {
+      name: "MSS Branch - Nanjing",
+      address: "Nanjing, Jiangsu, China",
+      lat: 32.0603,
+      lng: 118.7969,
+    },
+  ];
+
+  // Initialize map centered on China
+  const map = L.map('map').setView([35.8617, 104.1954], 4);
+
+  // Add OpenStreetMap tile layer with attribution
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution:
+      '© OpenStreetMap contributors | Map by You',
+  }).addTo(map);
+
+  // Create marker cluster group
+  const markers = L.markerClusterGroup();
+
+  // Add markers to cluster group with popups
+  locations.forEach((loc) => {
+    const marker = L.marker([loc.lat, loc.lng]);
+    marker.bindPopup(
+      `<strong>${loc.name}</strong><br />${loc.address}`
+    );
+    markers.addLayer(marker);
+  });
+
+  map.addLayer(markers);
+
+  // Zoom control position
+  map.zoomControl.setPosition('topright');
+
+  // Simple search feature filtering markers by name
+  const searchInput = document.getElementById('search-input');
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.trim().toLowerCase();
+
+    markers.clearLayers();
+
+    locations.forEach((loc) => {
+      if (loc.name.toLowerCase().includes(query)) {
+        const marker = L.marker([loc.lat, loc.lng]);
+        marker.bindPopup(
+          `<strong>${loc.name}</strong><br />${loc.address}`
+        );
+        markers.addLayer(marker);
+      }
     });
-  </script>
+
+    if (markers.getLayers().length > 0) {
+      // Zoom to markers if any match
+      const group = new L.featureGroup(markers.getLayers());
+      map.fitBounds(group.getBounds().pad(0.5));
+    }
+  });
+</script>
 </body>
 </html>
