@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MSS Locations in China</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style> #map { height: 100vh; width: 100%; } </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([34.5, 107], 4.5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const locations = [
+      ["National MSS HQ - Xiyuan (Beijing)", 39.9986, 116.2705],
+      ["National MSS HQ - Dongchang'an (Beijing)", 39.9075, 116.4125],
+      ["Beijing MSS Detention - Dahongmen", 39.8345, 116.3912],
+      ["Shanghai MSS - Ruining Road", 31.1768, 121.4241],
+      ["Guangzhou MSS - Dongfeng Rd", 23.1303, 113.2665],
+      ["Nanjing MSS - Yangzhou Rd", 32.0603, 118.7722],
+      ["Hangzhou MSS - Shangtang Rd", 30.2965, 120.1406],
+      ["Jinan MSS - Zhanqian Street", 36.6758, 117.0009],
+      ["Wuhan MSS - Bayi Road", 30.5811, 114.3162],
+      ["Changchun MSS - Xi'an Avenue", 43.8160, 125.3220],
+      ["Shijiazhuang MSS - Gongnong Rd", 38.0455, 114.4757],
+      ["Kunming MSS - Xiba Rd", 25.0389, 102.6755],
+      ["Haikou MSS - Bailongnan Rd", 20.0275, 110.3440],
+      ["Nanchang MSS - Guoan Rd", 28.6829, 115.8582],
+      ["Xi'an Tech Site - Jinye 2 Rd", 34.2204, 108.8777],
+      ["Xi'an Tech Site - Taibai North Rd", 34.2672, 108.9301]
+    ];
+
+    locations.forEach(([name, lat, lon]) => {
+      L.marker([lat, lon]).addTo(map).bindPopup(name);
+    });
+  </script>
+</body>
+</html>
